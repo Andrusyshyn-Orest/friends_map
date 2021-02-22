@@ -1,0 +1,11 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<h1>Specify what you want</h1>
+<form action="/build" method="post">
+    <input name="bearer" placeholder='Enter bearer token' type="text"/>
+    <input name="screen_name" placeholder = "Enter nickname (f.e. @BarackObama)" type="text"/>
+    <input name="count" placeholder = "Enter number of friends" type="text"/>
+    <input type="submit" value="Build map"/>
+</form>
+{% endblock %}
