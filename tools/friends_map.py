@@ -147,7 +147,8 @@ def generate_map(friends_dict: dict):
                                            icon=folium.Icon()))
     my_map.add_child(fg_markers)
     my_map.add_child(folium.LayerControl())
-    my_map.save("tools/templates/friends_map.html")
+    #my_map.save("tools/templates/friends_map.html")
+    return my_map
 
 
 def main(bearer: str, screen_name: str, count: str):
@@ -161,7 +162,8 @@ def main(bearer: str, screen_name: str, count: str):
     friends_coord = transform_list(friends)
     friends_dict = transform_to_dict(friends_coord)
 
-    generate_map(friends_dict)
+    my_map = generate_map(friends_dict)
+    return my_map
 
 
 if __name__ == "__main__":
