@@ -17,14 +17,14 @@ def register():
         return render_template("failure.html")
 
     try:
-        main(bearer, screen_name, count)
+        my_map = main(bearer, screen_name, count)
     except KeyError:
         return render_template("failure1.html")
     except ValueError:
         return render_template("failure2.html")
 
-    return render_template("friends_map.html")
+    return my_map._repr_html_()
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
