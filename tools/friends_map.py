@@ -8,6 +8,7 @@ import folium
 from geopy.geocoders import Nominatim
 from geopy.extra.rate_limiter import RateLimiter
 from geopy.exc import GeocoderUnavailable
+# from geopy.exc import GeocoderQuotaExceeded
 
 
 def get_json(bearer_token: str, screen_name: str, count: str) -> dict:
@@ -71,6 +72,7 @@ def make_friends_list(json_data: dict) -> list:
             friends.append( (friend['screen_name'], location) )
     return friends
 
+# COUNT = 0
 def find_coordinates_by_name(name: str) -> tuple:
     """
     Return coordinates as a tuple from name of the place.
@@ -82,11 +84,15 @@ def find_coordinates_by_name(name: str) -> tuple:
 
 
     geolocator = Nominatim(user_agent="webmap")
-
+    # global COUNT
+    # COUNT += 1
+    # print(name, COUNT)
     location = geolocator.geocode(name)
     name = name.split(',')
     while not location:
         name = ','.join(name[1:])
+        if name == "":
+            raise Exception
         location = geolocator.geocode(name)
     geocode = RateLimiter(geolocator.geocode, min_delay_seconds=0)
     return location.latitude, location.longitude
@@ -108,6 +114,10 @@ def transform_list(friends: list) -> list:
                                 find_coordinates_by_name(friend[1])) )
         except GeocoderUnavailable:
             continue
+        except Exception:
+            continue
+        # except GeocoderQuotaExceeded:
+        #     continue
     return friends_coord
 
 
@@ -147,7 +157,7 @@ def generate_map(friends_dict: dict):
                                            icon=folium.Icon()))
     my_map.add_child(fg_markers)
     my_map.add_child(folium.LayerControl())
-    #my_map.save("tools/templates/friends_map.html")
+    # my_map.save("tools/templates/friends_map.html")
     return my_map
 
 
@@ -157,12 +167,17 @@ def main(bearer: str, screen_name: str, count: str):
     """
 
     json_data = get_json(bearer, screen_name, count)
+    # print('json data got')
 
     friends = make_friends_list(json_data)
+    # print('friends list made')
     friends_coord = transform_list(friends)
+    # print('friends list transformed')
     friends_dict = transform_to_dict(friends_coord)
+    # print('transformed to dict')
 
     my_map = generate_map(friends_dict)
+    # print('generated map')
     return my_map
 
 
